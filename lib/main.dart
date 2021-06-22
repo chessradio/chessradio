@@ -1,113 +1,558 @@
-import 'package:flutter/material.dart';
+import 'dart:math';
 
-void main() {
-  runApp(MyApp());
+import 'package:audio_session/audio_session.dart';
+import 'package:flutter/foundation.dart';
+import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
+import 'package:just_audio/just_audio.dart';
+import 'package:rxdart/rxdart.dart';
+
+void main() => runApp(MyApp());
+
+class MyApp extends StatefulWidget {
+  @override
+  _MyAppState createState() => _MyAppState();
 }
 
-class MyApp extends StatelessWidget {
-  // This widget is the root of your application.
+class _MyAppState extends State<MyApp> {
+  late AudioPlayer _player;
+  final _playlist = ConcatenatingAudioSource(children: [
+    ClippingAudioSource(
+      start: Duration(seconds: 60),
+      end: Duration(seconds: 90),
+      child: AudioSource.uri(Uri.parse(
+          "https://s3.amazonaws.com/scifri-episodes/scifri20181123-episode.mp3")),
+      tag: AudioMetadata(
+        album: "Science Friday",
+        title: "A Salute To Head-Scratching Science (30 seconds)",
+        artwork:
+            "https://media.wnyc.org/i/1400/1400/l/80/1/ScienceFriday_WNYCStudios_1400.jpg",
+      ),
+    ),
+    AudioSource.uri(
+      Uri.parse(
+          "https://s3.amazonaws.com/scifri-episodes/scifri20181123-episode.mp3"),
+      tag: AudioMetadata(
+        album: "Science Friday",
+        title: "A Salute To Head-Scratching Science",
+        artwork:
+            "https://media.wnyc.org/i/1400/1400/l/80/1/ScienceFriday_WNYCStudios_1400.jpg",
+      ),
+    ),
+    AudioSource.uri(
+      Uri.parse("https://s3.amazonaws.com/scifri-segments/scifri201711241.mp3"),
+      tag: AudioMetadata(
+        album: "Science Friday",
+        title: "From Cat Rheology To Operatic Incompetence",
+        artwork:
+            "https://media.wnyc.org/i/1400/1400/l/80/1/ScienceFriday_WNYCStudios_1400.jpg",
+      ),
+    ),
+    AudioSource.uri(
+      Uri.parse("asset:///audio/nature.mp3"),
+      tag: AudioMetadata(
+        album: "Public Domain",
+        title: "Nature Sounds",
+        artwork:
+            "https://media.wnyc.org/i/1400/1400/l/80/1/ScienceFriday_WNYCStudios_1400.jpg",
+      ),
+    ),
+  ]);
+  int _addedCount = 0;
+
+  @override
+  void initState() {
+    super.initState();
+    _player = AudioPlayer();
+    SystemChrome.setSystemUIOverlayStyle(SystemUiOverlayStyle(
+      statusBarColor: Colors.black,
+    ));
+    _init();
+  }
+
+  Future<void> _init() async {
+    final session = await AudioSession.instance;
+    await session.configure(AudioSessionConfiguration.speech());
+    try {
+      await _player.setAudioSource(_playlist);
+    } catch (e) {
+      // catch load errors: 404, invalid url ...
+      print("An error occured $e");
+    }
+  }
+
+  @override
+  void dispose() {
+    _player.dispose();
+    super.dispose();
+  }
+
   @override
   Widget build(BuildContext context) {
     return MaterialApp(
-      title: 'Flutter Demo',
-      theme: ThemeData(
-        // This is the theme of your application.
-        //
-        // Try running your application with "flutter run". You'll see the
-        // application has a blue toolbar. Then, without quitting the app, try
-        // changing the primarySwatch below to Colors.green and then invoke
-        // "hot reload" (press "r" in the console where you ran "flutter run",
-        // or simply save your changes to "hot reload" in a Flutter IDE).
-        // Notice that the counter didn't reset back to zero; the application
-        // is not restarted.
-        primarySwatch: Colors.blue,
+      debugShowCheckedModeBanner: false,
+      home: Scaffold(
+        body: SafeArea(
+          child: Column(
+            crossAxisAlignment: CrossAxisAlignment.center,
+            mainAxisAlignment: MainAxisAlignment.center,
+            children: [
+              Expanded(
+                child: StreamBuilder<SequenceState?>(
+                  stream: _player.sequenceStateStream,
+                  builder: (context, snapshot) {
+                    final state = snapshot.data;
+                    if (state?.sequence.isEmpty ?? true) return SizedBox();
+                    final metadata = state!.currentSource!.tag as AudioMetadata;
+                    return Column(
+                      crossAxisAlignment: CrossAxisAlignment.center,
+                      children: [
+                        Expanded(
+                          child: Padding(
+                            padding: const EdgeInsets.all(8.0),
+                            child:
+                                Center(child: Image.network(metadata.artwork)),
+                          ),
+                        ),
+                        Text(metadata.album,
+                            style: Theme.of(context).textTheme.headline6),
+                        Text(metadata.title),
+                      ],
+                    );
+                  },
+                ),
+              ),
+              ControlButtons(_player),
+              StreamBuilder<Duration?>(
+                stream: _player.durationStream,
+                builder: (context, snapshot) {
+                  final duration = snapshot.data ?? Duration.zero;
+                  return StreamBuilder<PositionData>(
+                    stream: Rx.combineLatest2<Duration, Duration, PositionData>(
+                        _player.positionStream,
+                        _player.bufferedPositionStream,
+                        (position, bufferedPosition) =>
+                            PositionData(position, bufferedPosition)),
+                    builder: (context, snapshot) {
+                      final positionData = snapshot.data ??
+                          PositionData(Duration.zero, Duration.zero);
+                      var position = positionData.position;
+                      if (position > duration) {
+                        position = duration;
+                      }
+                      var bufferedPosition = positionData.bufferedPosition;
+                      if (bufferedPosition > duration) {
+                        bufferedPosition = duration;
+                      }
+                      return SeekBar(
+                        duration: duration,
+                        position: position,
+                        bufferedPosition: bufferedPosition,
+                        onChangeEnd: (newPosition) {
+                          _player.seek(newPosition);
+                        },
+                      );
+                    },
+                  );
+                },
+              ),
+              SizedBox(height: 8.0),
+              Row(
+                children: [
+                  StreamBuilder<LoopMode>(
+                    stream: _player.loopModeStream,
+                    builder: (context, snapshot) {
+                      final loopMode = snapshot.data ?? LoopMode.off;
+                      const icons = [
+                        Icon(Icons.repeat, color: Colors.grey),
+                        Icon(Icons.repeat, color: Colors.orange),
+                        Icon(Icons.repeat_one, color: Colors.orange),
+                      ];
+                      const cycleModes = [
+                        LoopMode.off,
+                        LoopMode.all,
+                        LoopMode.one,
+                      ];
+                      final index = cycleModes.indexOf(loopMode);
+                      return IconButton(
+                        icon: icons[index],
+                        onPressed: () {
+                          _player.setLoopMode(cycleModes[
+                              (cycleModes.indexOf(loopMode) + 1) %
+                                  cycleModes.length]);
+                        },
+                      );
+                    },
+                  ),
+                  Expanded(
+                    child: Text(
+                      "Playlist",
+                      style: Theme.of(context).textTheme.headline6,
+                      textAlign: TextAlign.center,
+                    ),
+                  ),
+                  StreamBuilder<bool>(
+                    stream: _player.shuffleModeEnabledStream,
+                    builder: (context, snapshot) {
+                      final shuffleModeEnabled = snapshot.data ?? false;
+                      return IconButton(
+                        icon: shuffleModeEnabled
+                            ? Icon(Icons.shuffle, color: Colors.orange)
+                            : Icon(Icons.shuffle, color: Colors.grey),
+                        onPressed: () async {
+                          final enable = !shuffleModeEnabled;
+                          if (enable) {
+                            await _player.shuffle();
+                          }
+                          await _player.setShuffleModeEnabled(enable);
+                        },
+                      );
+                    },
+                  ),
+                ],
+              ),
+              Container(
+                height: 240.0,
+                child: StreamBuilder<SequenceState?>(
+                  stream: _player.sequenceStateStream,
+                  builder: (context, snapshot) {
+                    final state = snapshot.data;
+                    final sequence = state?.sequence ?? [];
+                    return ReorderableListView(
+                      onReorder: (int oldIndex, int newIndex) {
+                        if (oldIndex < newIndex) newIndex--;
+                        _playlist.move(oldIndex, newIndex);
+                      },
+                      children: [
+                        for (var i = 0; i < sequence.length; i++)
+                          Dismissible(
+                            key: ValueKey(sequence[i]),
+                            background: Container(
+                              color: Colors.redAccent,
+                              alignment: Alignment.centerRight,
+                              child: Padding(
+                                padding: const EdgeInsets.only(right: 8.0),
+                                child: Icon(Icons.delete, color: Colors.white),
+                              ),
+                            ),
+                            onDismissed: (dismissDirection) {
+                              _playlist.removeAt(i);
+                            },
+                            child: Material(
+                              color: i == state!.currentIndex
+                                  ? Colors.grey.shade300
+                                  : null,
+                              child: ListTile(
+                                title: Text(sequence[i].tag.title as String),
+                                onTap: () {
+                                  _player.seek(Duration.zero, index: i);
+                                },
+                              ),
+                            ),
+                          ),
+                      ],
+                    );
+                  },
+                ),
+              ),
+            ],
+          ),
+        ),
+        floatingActionButton: FloatingActionButton(
+          child: Icon(Icons.add),
+          onPressed: () {
+            _playlist.add(AudioSource.uri(
+              Uri.parse("asset:///audio/nature.mp3"),
+              tag: AudioMetadata(
+                album: "Public Domain",
+                title: "Nature Sounds ${++_addedCount}",
+                artwork:
+                    "https://media.wnyc.org/i/1400/1400/l/80/1/ScienceFriday_WNYCStudios_1400.jpg",
+              ),
+            ));
+          },
+        ),
       ),
-      home: MyHomePage(title: 'Flutter Demo Home Page'),
     );
   }
 }
 
-class MyHomePage extends StatefulWidget {
-  MyHomePage({Key? key, required this.title}) : super(key: key);
+class ControlButtons extends StatelessWidget {
+  final AudioPlayer player;
 
-  // This widget is the home page of your application. It is stateful, meaning
-  // that it has a State object (defined below) that contains fields that affect
-  // how it looks.
-
-  // This class is the configuration for the state. It holds the values (in this
-  // case the title) provided by the parent (in this case the App widget) and
-  // used by the build method of the State. Fields in a Widget subclass are
-  // always marked "final".
-
-  final String title;
+  ControlButtons(this.player);
 
   @override
-  _MyHomePageState createState() => _MyHomePageState();
+  Widget build(BuildContext context) {
+    return Row(
+      mainAxisSize: MainAxisSize.min,
+      children: [
+        IconButton(
+          icon: Icon(Icons.volume_up),
+          onPressed: () {
+            _showSliderDialog(
+              context: context,
+              title: "Adjust volume",
+              divisions: 10,
+              min: 0.0,
+              max: 1.0,
+              stream: player.volumeStream,
+              onChanged: player.setVolume,
+            );
+          },
+        ),
+        StreamBuilder<SequenceState?>(
+          stream: player.sequenceStateStream,
+          builder: (context, snapshot) => IconButton(
+            icon: Icon(Icons.skip_previous),
+            onPressed: player.hasPrevious ? player.seekToPrevious : null,
+          ),
+        ),
+        StreamBuilder<PlayerState>(
+          stream: player.playerStateStream,
+          builder: (context, snapshot) {
+            final playerState = snapshot.data;
+            final processingState = playerState?.processingState;
+            final playing = playerState?.playing;
+            if (processingState == ProcessingState.loading ||
+                processingState == ProcessingState.buffering) {
+              return Container(
+                margin: EdgeInsets.all(8.0),
+                width: 64.0,
+                height: 64.0,
+                child: CircularProgressIndicator(),
+              );
+            } else if (playing != true) {
+              return IconButton(
+                icon: Icon(Icons.play_arrow),
+                iconSize: 64.0,
+                onPressed: player.play,
+              );
+            } else if (processingState != ProcessingState.completed) {
+              return IconButton(
+                icon: Icon(Icons.pause),
+                iconSize: 64.0,
+                onPressed: player.pause,
+              );
+            } else {
+              return IconButton(
+                icon: Icon(Icons.replay),
+                iconSize: 64.0,
+                onPressed: () => player.seek(Duration.zero,
+                    index: player.effectiveIndices!.first),
+              );
+            }
+          },
+        ),
+        StreamBuilder<SequenceState?>(
+          stream: player.sequenceStateStream,
+          builder: (context, snapshot) => IconButton(
+            icon: Icon(Icons.skip_next),
+            onPressed: player.hasNext ? player.seekToNext : null,
+          ),
+        ),
+        StreamBuilder<double>(
+          stream: player.speedStream,
+          builder: (context, snapshot) => IconButton(
+            icon: Text("${snapshot.data?.toStringAsFixed(1)}x",
+                style: TextStyle(fontWeight: FontWeight.bold)),
+            onPressed: () {
+              _showSliderDialog(
+                context: context,
+                title: "Adjust speed",
+                divisions: 10,
+                min: 0.5,
+                max: 1.5,
+                stream: player.speedStream,
+                onChanged: player.setSpeed,
+              );
+            },
+          ),
+        ),
+      ],
+    );
+  }
 }
 
-class _MyHomePageState extends State<MyHomePage> {
-  int _counter = 0;
+class SeekBar extends StatefulWidget {
+  final Duration duration;
+  final Duration position;
+  final Duration bufferedPosition;
+  final ValueChanged<Duration>? onChanged;
+  final ValueChanged<Duration>? onChangeEnd;
 
-  void _incrementCounter() {
-    setState(() {
-      // This call to setState tells the Flutter framework that something has
-      // changed in this State, which causes it to rerun the build method below
-      // so that the display can reflect the updated values. If we changed
-      // _counter without calling setState(), then the build method would not be
-      // called again, and so nothing would appear to happen.
-      _counter++;
-    });
+  SeekBar({
+    required this.duration,
+    required this.position,
+    required this.bufferedPosition,
+    this.onChanged,
+    this.onChangeEnd,
+  });
+
+  @override
+  _SeekBarState createState() => _SeekBarState();
+}
+
+class _SeekBarState extends State<SeekBar> {
+  double? _dragValue;
+  late SliderThemeData _sliderThemeData;
+
+  @override
+  void didChangeDependencies() {
+    super.didChangeDependencies();
+
+    _sliderThemeData = SliderTheme.of(context).copyWith(
+      trackHeight: 2.0,
+    );
   }
 
   @override
   Widget build(BuildContext context) {
-    // This method is rerun every time setState is called, for instance as done
-    // by the _incrementCounter method above.
-    //
-    // The Flutter framework has been optimized to make rerunning build methods
-    // fast, so that you can just rebuild anything that needs updating rather
-    // than having to individually change instances of widgets.
-    return Scaffold(
-      appBar: AppBar(
-        // Here we take the value from the MyHomePage object that was created by
-        // the App.build method, and use it to set our appbar title.
-        title: Text(widget.title),
-      ),
-      body: Center(
-        // Center is a layout widget. It takes a single child and positions it
-        // in the middle of the parent.
-        child: Column(
-          // Column is also a layout widget. It takes a list of children and
-          // arranges them vertically. By default, it sizes itself to fit its
-          // children horizontally, and tries to be as tall as its parent.
-          //
-          // Invoke "debug painting" (press "p" in the console, choose the
-          // "Toggle Debug Paint" action from the Flutter Inspector in Android
-          // Studio, or the "Toggle Debug Paint" command in Visual Studio Code)
-          // to see the wireframe for each widget.
-          //
-          // Column has various properties to control how it sizes itself and
-          // how it positions its children. Here we use mainAxisAlignment to
-          // center the children vertically; the main axis here is the vertical
-          // axis because Columns are vertical (the cross axis would be
-          // horizontal).
-          mainAxisAlignment: MainAxisAlignment.center,
-          children: <Widget>[
-            Text(
-              'You have pushed the button this many times:',
+    return Stack(
+      children: [
+        SliderTheme(
+          data: _sliderThemeData.copyWith(
+            thumbShape: HiddenThumbComponentShape(),
+            activeTrackColor: Colors.blue.shade100,
+            inactiveTrackColor: Colors.grey.shade300,
+          ),
+          child: ExcludeSemantics(
+            child: Slider(
+              min: 0.0,
+              max: widget.duration.inMilliseconds.toDouble(),
+              value: widget.bufferedPosition.inMilliseconds.toDouble(),
+              onChanged: (value) {
+                setState(() {
+                  _dragValue = value;
+                });
+                if (widget.onChanged != null) {
+                  widget.onChanged!(Duration(milliseconds: value.round()));
+                }
+              },
+              onChangeEnd: (value) {
+                if (widget.onChangeEnd != null) {
+                  widget.onChangeEnd!(Duration(milliseconds: value.round()));
+                }
+                _dragValue = null;
+              },
             ),
-            Text(
-              '$_counter',
-              style: Theme.of(context).textTheme.headline4,
-            ),
-          ],
+          ),
         ),
-      ),
-      floatingActionButton: FloatingActionButton(
-        onPressed: _incrementCounter,
-        tooltip: 'Increment',
-        child: Icon(Icons.add),
-      ), // This trailing comma makes auto-formatting nicer for build methods.
+        SliderTheme(
+          data: _sliderThemeData.copyWith(
+            inactiveTrackColor: Colors.transparent,
+          ),
+          child: Slider(
+            min: 0.0,
+            max: widget.duration.inMilliseconds.toDouble(),
+            value: min(_dragValue ?? widget.position.inMilliseconds.toDouble(),
+                widget.duration.inMilliseconds.toDouble()),
+            onChanged: (value) {
+              setState(() {
+                _dragValue = value;
+              });
+              if (widget.onChanged != null) {
+                widget.onChanged!(Duration(milliseconds: value.round()));
+              }
+            },
+            onChangeEnd: (value) {
+              if (widget.onChangeEnd != null) {
+                widget.onChangeEnd!(Duration(milliseconds: value.round()));
+              }
+              _dragValue = null;
+            },
+          ),
+        ),
+        Positioned(
+          right: 16.0,
+          bottom: 0.0,
+          child: Text(
+              RegExp(r'((^0*[1-9]\d*:)?\d{2}:\d{2})\.\d+$')
+                      .firstMatch("$_remaining")
+                      ?.group(1) ??
+                  '$_remaining',
+              style: Theme.of(context).textTheme.caption),
+        ),
+      ],
     );
   }
+
+  Duration get _remaining => widget.duration - widget.position;
+}
+
+void _showSliderDialog({
+  required BuildContext context,
+  required String title,
+  required int divisions,
+  required double min,
+  required double max,
+  String valueSuffix = '',
+  required Stream<double> stream,
+  required ValueChanged<double> onChanged,
+}) {
+  showDialog<void>(
+    context: context,
+    builder: (context) => AlertDialog(
+      title: Text(title, textAlign: TextAlign.center),
+      content: StreamBuilder<double>(
+        stream: stream,
+        builder: (context, snapshot) => Container(
+          height: 100.0,
+          child: Column(
+            children: [
+              Text('${snapshot.data?.toStringAsFixed(1)}$valueSuffix',
+                  style: TextStyle(
+                      fontFamily: 'Fixed',
+                      fontWeight: FontWeight.bold,
+                      fontSize: 24.0)),
+              Slider(
+                divisions: divisions,
+                min: min,
+                max: max,
+                value: snapshot.data ?? 1.0,
+                onChanged: onChanged,
+              ),
+            ],
+          ),
+        ),
+      ),
+    ),
+  );
+}
+
+class AudioMetadata {
+  final String album;
+  final String title;
+  final String artwork;
+
+  AudioMetadata(
+      {required this.album, required this.title, required this.artwork});
+}
+
+class HiddenThumbComponentShape extends SliderComponentShape {
+  @override
+  Size getPreferredSize(bool isEnabled, bool isDiscrete) => Size.zero;
+
+  @override
+  void paint(
+    PaintingContext context,
+    Offset center, {
+    required Animation<double> activationAnimation,
+    required Animation<double> enableAnimation,
+    required bool isDiscrete,
+    required TextPainter labelPainter,
+    required RenderBox parentBox,
+    required SliderThemeData sliderTheme,
+    required TextDirection textDirection,
+    required double value,
+    required double textScaleFactor,
+    required Size sizeWithOverflow,
+  }) {}
+}
+
+class PositionData {
+  final Duration position;
+  final Duration bufferedPosition;
+
+  PositionData(this.position, this.bufferedPosition);
 }
