@@ -1,13 +1,10 @@
 import 'package:flutter/material.dart';
-
-import 'package:google_fonts/google_fonts.dart';
 import 'package:just_audio/just_audio.dart';
 
 class ControlButtonsWidget extends StatelessWidget {
   final AudioPlayer player;
-  final Function showSliderDialog;
 
-  ControlButtonsWidget(this.player, this.showSliderDialog);
+  ControlButtonsWidget(this.player);
 
   @override
   Widget build(BuildContext context) {
@@ -17,7 +14,7 @@ class ControlButtonsWidget extends StatelessWidget {
         IconButton(
           icon: Icon(Icons.volume_up),
           onPressed: () {
-            showSliderDialog(
+            _showSliderDialog(
               context: context,
               title: "Adjust volume",
               divisions: 10,
@@ -84,7 +81,7 @@ class ControlButtonsWidget extends StatelessWidget {
             icon: Text("${snapshot.data?.toStringAsFixed(1)}x",
                 style: TextStyle(fontWeight: FontWeight.bold)),
             onPressed: () {
-              showSliderDialog(
+              _showSliderDialog(
                 context: context,
                 title: "Adjust speed",
                 divisions: 10,
@@ -99,4 +96,44 @@ class ControlButtonsWidget extends StatelessWidget {
       ],
     );
   }
+}
+
+void _showSliderDialog({
+  required BuildContext context,
+  required String title,
+  required int divisions,
+  required double min,
+  required double max,
+  String valueSuffix = '',
+  required Stream<double> stream,
+  required ValueChanged<double> onChanged,
+}) {
+  showDialog<void>(
+    context: context,
+    builder: (context) => AlertDialog(
+      title: Text(title, textAlign: TextAlign.center),
+      content: StreamBuilder<double>(
+        stream: stream,
+        builder: (context, snapshot) => Container(
+          height: 100.0,
+          child: Column(
+            children: [
+              Text('${snapshot.data?.toStringAsFixed(1)}$valueSuffix',
+                  style: TextStyle(
+                      fontFamily: 'Fixed',
+                      fontWeight: FontWeight.bold,
+                      fontSize: 24.0)),
+              Slider(
+                divisions: divisions,
+                min: min,
+                max: max,
+                value: snapshot.data ?? 1.0,
+                onChanged: onChanged,
+              ),
+            ],
+          ),
+        ),
+      ),
+    ),
+  );
 }

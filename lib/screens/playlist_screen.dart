@@ -16,10 +16,17 @@ class PlayListScreen extends StatefulWidget {
 
 class _PlayListScreenState extends State<PlayListScreen> {
   late AudioPlayer _player;
+  late ConcatenatingAudioSource _playlist;
+
   @override
   void initState() {
     super.initState();
     _player = AudioPlayer();
+    _playlist = ConcatenatingAudioSource(
+        children: puzzles
+            .map((puzzle) =>
+                AudioSource.uri(Uri.parse(puzzle.audioPuzzle), tag: puzzle))
+            .toList());
     SystemChrome.setSystemUIOverlayStyle(SystemUiOverlayStyle(
       statusBarColor: Colors.black,
     ));
@@ -30,7 +37,7 @@ class _PlayListScreenState extends State<PlayListScreen> {
     final session = await AudioSession.instance;
     await session.configure(AudioSessionConfiguration.speech());
     try {
-      await _player.setAudioSource(playlist);
+      await _player.setAudioSource(_playlist);
     } catch (e) {
       // catch load errors: 404, invalid url ...
       print("An error occured $e");
@@ -64,73 +71,10 @@ class _PlayListScreenState extends State<PlayListScreen> {
                   crossAxisAlignment: CrossAxisAlignment.center,
                   mainAxisAlignment: MainAxisAlignment.center,
                   children: [
-                    PlaylistWidget(_player, playlist),
+                    PlaylistWidget(_player, _playlist),
                     SizedBox(height: 8.0),
                     AudioBarWidget(_player),
-                    ControlButtonsWidget(_player, _showSliderDialog),
-
-                    /***                   
-
-                    
-                    Row(
-                      children: [
-                        StreamBuilder<LoopMode>(
-                          stream: _player.loopModeStream,
-                          builder: (context, snapshot) {
-                            final loopMode = snapshot.data ?? LoopMode.off;
-                            const icons = [
-                              Icon(Icons.repeat, color: Colors.grey),
-                              Icon(Icons.repeat, color: Colors.orange),
-                              Icon(Icons.repeat_one, color: Colors.orange),
-                            ];
-                            const cycleModes = [
-                              LoopMode.off,
-                              LoopMode.all,
-                              LoopMode.one,
-                            ];
-                            final index = cycleModes.indexOf(loopMode);
-                            return IconButton(
-                              icon: icons[index],
-                              onPressed: () {
-                                _player.setLoopMode(cycleModes[
-                                    (cycleModes.indexOf(loopMode) + 1) %
-                                        cycleModes.length]);
-                              },
-                            );
-                          },
-                        ),
-                        Expanded(
-                          child: Text(
-                            "Playlist",
-                            style: Theme.of(context).textTheme.headline6,
-                            textAlign: TextAlign.center,
-                          ),
-                        ),
-                        StreamBuilder<bool>(
-                          stream: _player.shuffleModeEnabledStream,
-                          builder: (context, snapshot) {
-                            final shuffleModeEnabled = snapshot.data ?? false;
-                            return IconButton(
-                              icon: shuffleModeEnabled
-                                  ? Icon(Icons.shuffle, color: Colors.orange)
-                                  : Icon(Icons.shuffle, color: Colors.grey),
-                              onPressed: () async {
-                                final enable = !shuffleModeEnabled;
-                                if (enable) {
-                                  await _player.shuffle();
-                                }
-                                await _player.setShuffleModeEnabled(enable);
-                              },
-                            );
-                          },
-                        ),
-                      ],
-                    ),
-                   
-                   
-                
-                  
-         */
+                    ControlButtonsWidget(_player),
                   ],
                 ),
               ),
@@ -140,44 +84,4 @@ class _PlayListScreenState extends State<PlayListScreen> {
       ),
     );
   }
-}
-
-void _showSliderDialog({
-  required BuildContext context,
-  required String title,
-  required int divisions,
-  required double min,
-  required double max,
-  String valueSuffix = '',
-  required Stream<double> stream,
-  required ValueChanged<double> onChanged,
-}) {
-  showDialog<void>(
-    context: context,
-    builder: (context) => AlertDialog(
-      title: Text(title, textAlign: TextAlign.center),
-      content: StreamBuilder<double>(
-        stream: stream,
-        builder: (context, snapshot) => Container(
-          height: 100.0,
-          child: Column(
-            children: [
-              Text('${snapshot.data?.toStringAsFixed(1)}$valueSuffix',
-                  style: TextStyle(
-                      fontFamily: 'Fixed',
-                      fontWeight: FontWeight.bold,
-                      fontSize: 24.0)),
-              Slider(
-                divisions: divisions,
-                min: min,
-                max: max,
-                value: snapshot.data ?? 1.0,
-                onChanged: onChanged,
-              ),
-            ],
-          ),
-        ),
-      ),
-    ),
-  );
 }
