@@ -5,14 +5,14 @@ final List<Puzzle> puzzles = [
       'Puzzle 1',
       Level.EASY,
       PieceColor.WHITE,
-      'https://s3.amazonaws.com/scifri-episodes/scifri20181123-episode.mp3',
+      'https://github.com/chessradio/chessradio-db/blob/main/puzzles/1_challenge_female1.mp3',
       'https://github.com/enric1994/chessradio/raw/master/assets/puzzles/1_solution_female1.mp3',
       'assets/puzzles/1.jpeg'),
   Puzzle(
       'Puzzle 2',
       Level.EASY,
       PieceColor.WHITE,
-      'https://s3.amazonaws.com/scifri-episodes/scifri20181123-episode.mp3',
+      'https://github.com/chessradio/chessradio-db/blob/main/puzzles/2_challenge_female1.mp3',
       'https://github.com/enric1994/chessradio/raw/master/assets/puzzles/2_solution_female1.mp3',
       'assets/puzzles/2.jpeg'),
   Puzzle(

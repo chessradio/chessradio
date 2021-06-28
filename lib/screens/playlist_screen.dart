@@ -1,13 +1,13 @@
+import 'package:chessradio/widgets/bar/chess_radio_drawer_widget.dart';
+import 'package:chessradio/widgets/bar/chess_radio_title_widget.dart';
 import 'package:flutter/material.dart';
 import 'package:just_audio/just_audio.dart';
 import 'package:flutter/services.dart';
 import 'package:audio_session/audio_session.dart';
-import 'package:chessradio/model/data.dart';
-import 'package:chessradio/widgets/audio_bar_widget.dart';
-import 'package:chessradio/widgets/chess_radio_drawer_widget.dart';
-import 'package:chessradio/widgets/chess_radio_title_widget.dart';
-import 'package:chessradio/widgets/control_buttons_widget.dart';
-import 'package:chessradio/widgets/playlist_widget.dart';
+import 'package:chessradio/data.dart';
+import 'package:chessradio/widgets/playlist/audio_bar_widget.dart';
+import 'package:chessradio/widgets/playlist/control_buttons_widget.dart';
+import 'package:chessradio/widgets/playlist/playlist_widget.dart';
 
 class PlayListScreen extends StatefulWidget {
   @override
