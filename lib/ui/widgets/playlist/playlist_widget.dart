@@ -1,9 +1,10 @@
+import 'package:chessradio/model/puzzle.dart';
 import 'package:flutter/material.dart';
 import 'package:just_audio/just_audio.dart';
 
 class PlaylistWidget extends StatelessWidget {
   final AudioPlayer player;
-  final ConcatenatingAudioSource playlist;
+  final List<Puzzle> playlist;
 
   PlaylistWidget(this.player, this.playlist);
 

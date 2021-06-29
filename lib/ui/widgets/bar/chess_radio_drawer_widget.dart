@@ -1,7 +1,7 @@
+import 'package:chessradio/ui/screens/about_screen.dart';
+import 'package:chessradio/ui/screens/feedback_screen.dart';
 import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
-import 'package:chessradio/screens/about_screen.dart';
-import 'package:chessradio/screens/feedback_screen.dart';
 
 class ChessRadioDrawerWidget extends StatefulWidget {
   @override

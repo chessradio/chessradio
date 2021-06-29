@@ -1,13 +1,14 @@
-import 'package:chessradio/widgets/bar/chess_radio_drawer_widget.dart';
-import 'package:chessradio/widgets/bar/chess_radio_title_widget.dart';
+import 'package:chessradio/model/puzzle.dart';
+import 'package:chessradio/repository/PuzzleRepository.dart';
+import 'package:chessradio/ui/widgets/bar/chess_radio_drawer_widget.dart';
+import 'package:chessradio/ui/widgets/bar/chess_radio_title_widget.dart';
+import 'package:chessradio/ui/widgets/playlist/audio_bar_widget.dart';
+import 'package:chessradio/ui/widgets/playlist/control_buttons_widget.dart';
+import 'package:chessradio/ui/widgets/playlist/playlist_widget.dart';
 import 'package:flutter/material.dart';
 import 'package:just_audio/just_audio.dart';
 import 'package:flutter/services.dart';
 import 'package:audio_session/audio_session.dart';
-import 'package:chessradio/data.dart';
-import 'package:chessradio/widgets/playlist/audio_bar_widget.dart';
-import 'package:chessradio/widgets/playlist/control_buttons_widget.dart';
-import 'package:chessradio/widgets/playlist/playlist_widget.dart';
 
 class PlayListScreen extends StatefulWidget {
   @override
@@ -15,18 +16,18 @@ class PlayListScreen extends StatefulWidget {
 }
 
 class _PlayListScreenState extends State<PlayListScreen> {
+  //final HttpService httpService = HttpService();
+
+  late PuzzleRepository _repository;
   late AudioPlayer _player;
-  late ConcatenatingAudioSource _playlist;
+  late List<Puzzle> _playlist = List.empty();
 
   @override
   void initState() {
     super.initState();
+    _repository = PuzzleRepository();
     _player = AudioPlayer();
-    _playlist = ConcatenatingAudioSource(
-        children: puzzles
-            .map((puzzle) =>
-                AudioSource.uri(Uri.parse(puzzle.audioPuzzle), tag: puzzle))
-            .toList());
+
     SystemChrome.setSystemUIOverlayStyle(SystemUiOverlayStyle(
       statusBarColor: Colors.black,
     ));
@@ -34,10 +35,17 @@ class _PlayListScreenState extends State<PlayListScreen> {
   }
 
   Future<void> _init() async {
+    _playlist =
+        await _repository.fetchPuzzles().then((value) => value.toList());
+
     final session = await AudioSession.instance;
     await session.configure(AudioSessionConfiguration.speech());
     try {
-      await _player.setAudioSource(_playlist);
+      await _player.setAudioSource(ConcatenatingAudioSource(
+          children: _playlist
+              .map((puzzle) =>
+                  AudioSource.uri(Uri.parse(puzzle.audioAsset), tag: puzzle))
+              .toList()));
     } catch (e) {
       // catch load errors: 404, invalid url ...
       print("An error occured $e");

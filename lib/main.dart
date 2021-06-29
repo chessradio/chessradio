@@ -1,5 +1,5 @@
+import 'package:chessradio/ui/screens/playlist_screen.dart';
 import 'package:flutter/material.dart';
-import 'package:chessradio/screens/playlist_screen.dart';
 
 void main() {
   runApp(ChessRadio());

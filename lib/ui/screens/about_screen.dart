@@ -1,8 +1,8 @@
-import 'package:chessradio/widgets/bar/chess_radio_drawer_widget.dart';
-import 'package:chessradio/widgets/bar/chess_radio_title_widget.dart';
+import 'package:chessradio/ui/screens/playlist_screen.dart';
+import 'package:chessradio/ui/widgets/bar/chess_radio_drawer_widget.dart';
+import 'package:chessradio/ui/widgets/bar/chess_radio_title_widget.dart';
 import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
-import 'package:chessradio/screens/playlist_screen.dart';
 
 class AboutScreen extends StatefulWidget {
   @override
