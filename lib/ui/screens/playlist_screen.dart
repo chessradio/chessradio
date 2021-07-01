@@ -1,3 +1,4 @@
+import 'package:chessradio/bloc/PuzzlesBloc.dart';
 import 'package:chessradio/model/puzzle.dart';
 import 'package:chessradio/repository/PuzzleRepository.dart';
 import 'package:chessradio/ui/widgets/bar/chess_radio_drawer_widget.dart';
@@ -16,11 +17,9 @@ class PlayListScreen extends StatefulWidget {
 }
 
 class _PlayListScreenState extends State<PlayListScreen> {
-  //final HttpService httpService = HttpService();
-
   late PuzzleRepository _repository;
   late AudioPlayer _player;
-  late List<Puzzle> _playlist = List.empty();
+  late List<Puzzle> _playlist;
 
   @override
   void initState() {
@@ -79,7 +78,7 @@ class _PlayListScreenState extends State<PlayListScreen> {
                   crossAxisAlignment: CrossAxisAlignment.center,
                   mainAxisAlignment: MainAxisAlignment.center,
                   children: [
-                    PlaylistWidget(_player, _playlist),
+                    PlaylistWidget(_player, PuzzlesBloc()),
                     SizedBox(height: 8.0),
                     AudioBarWidget(_player),
                     ControlButtonsWidget(_player),
