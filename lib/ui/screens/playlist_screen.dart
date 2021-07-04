@@ -59,7 +59,11 @@ class _PlayListScreenState extends State<PlayListScreen> {
                   crossAxisAlignment: CrossAxisAlignment.center,
                   mainAxisAlignment: MainAxisAlignment.center,
                   children: [
-                    PlaylistWidget(_player),
+                    SizedBox(height: 1.0),
+                    Container(
+                      height: 240,
+                      child: PlaylistWidget(_player),
+                    ),
                     SizedBox(height: 8.0),
                     AudioBarWidget(_player),
                     ControlButtonsWidget(_player),

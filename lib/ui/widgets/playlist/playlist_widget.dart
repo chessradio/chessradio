@@ -1,69 +1,61 @@
-import 'package:chessradio/bloc/PuzzlesBloc.dart';
 import 'package:chessradio/model/puzzle.dart';
-import 'package:chessradio/networking/Response.dart';
-import 'package:chessradio/ui/widgets/playlist/image_dialog_widget.dart';
+import 'package:chessradio/repository/PuzzleRepository.dart';
+import 'package:chessradio/ui/widgets/playlist/puzzle_widget.dart';
 import 'package:flutter/material.dart';
 import 'package:just_audio/just_audio.dart';
 
-class PlaylistWidget extends StatelessWidget {
+class PlaylistWidget extends StatefulWidget {
   final AudioPlayer player;
-  final PuzzlesBloc bloc;
+  PlaylistWidget(this.player);
 
-  PlaylistWidget(this.player, this.bloc);
+  @override
+  _PlaylistWidgetState createState() => _PlaylistWidgetState();
+}
+
+class _PlaylistWidgetState extends State<PlaylistWidget> {
+  late List<Puzzle> _playlist;
+
+  @override
+  void initState() {
+    super.initState();
+    refresh();
+  }
+
+  Future<void> refresh() async {
+    PuzzleRepository repository = PuzzleRepository();
+    _playlist = await repository.fetchPuzzles().then((value) => value.toList());
+    try {
+      await widget.player.setAudioSource(ConcatenatingAudioSource(
+          children: _playlist
+              .map((puzzle) =>
+                  AudioSource.uri(Uri.parse(puzzle.audioAsset), tag: puzzle))
+              .toList()));
+    } catch (e) {
+      // catch load errors: 404, invalid url ...
+      print("An error occured $e");
+    }
+  }
 
   @override
   Widget build(BuildContext context) {
-    return Container(
-      height: 240.0,
-      child: RefreshIndicator(
-        onRefresh: () => bloc.fetchPuzzles(),
-        child: StreamBuilder<Response<List<Puzzle>>>(
-          stream: bloc.puzzlesListStream,
-          builder: (context, snapshot) {
-            if (snapshot.hasData) {
-              switch (snapshot.data!.status) {
-                case Status.LOADING:
-                  return Loading();
-                case Status.COMPLETED:
-                  return StreamBuilder<SequenceState?>(
-                    stream: player.sequenceStateStream,
-                    builder: (context, snapshot) {
-                      final state = snapshot.data;
-                      final sequence = state?.sequence ?? [];
-                      return ListView.builder(
-                          itemCount: sequence.length,
-                          itemBuilder: (BuildContext context, int index) {
-                            return Material(
-                              color: index == state!.currentIndex
-                                  ? Colors.grey.shade300
-                                  : null,
-                              child: ListTile(
-                                title:
-                                    Text(sequence[index].tag.title as String),
-                                onTap: () {
-                                  player.seek(Duration.zero, index: index);
-                                },
-                                leading: Image(
-                                  image: sequence[index].tag.playingAs ==
-                                          PieceColor.WHITE
-                                      ? AssetImage(
-                                          "assets/icons/white-piece.png")
-                                      : AssetImage(
-                                          "assets/icons/black-piece.png"),
-                                ),
-                              ),
-                            );
-                          });
-                    },
-                  );
-                case Status.ERROR:
-                  return Error(
-                      snapshot.data!.message, () => bloc.fetchPuzzles());
-              }
-            }
-            return Container();
-          },
-        ),
+    return RefreshIndicator(
+      onRefresh: () => refresh(),
+      child: StreamBuilder<SequenceState?>(
+        stream: widget.player.sequenceStateStream,
+        builder: (context, snapshot) {
+          final state = snapshot.data;
+          final sequence = state?.sequence ?? [];
+          return ListView.builder(
+              itemCount: sequence.length,
+              itemBuilder: (BuildContext context, int index) {
+                return PuzzleWidget(
+                    sequence[index].tag,
+                    index == state!.currentIndex
+                        ? Colors.grey.shade300
+                        : Colors.transparent,
+                    () => widget.player.seek(Duration.zero, index: index));
+              });
+        },
       ),
     );
   }
