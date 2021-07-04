@@ -20,16 +20,26 @@ class _PuzzleWidgetState extends State<PuzzleWidget> {
       child: ListTile(
         title: Text(widget.puzzle.title),
         onTap: widget.onTap,
-        leading: Image(
-            image: widget.puzzle.playingAs == PieceColor.WHITE
-                ? AssetImage("assets/icons/white-piece.png")
-                : AssetImage("assets/icons/black-piece.png")),
-        trailing: Image(
-            image: widget.puzzle.level == Level.EASY
-                ? AssetImage("assets/icons/easy.png")
-                : widget.puzzle.level == Level.MEDIUM
-                    ? AssetImage("assets/icons/medium.png")
-                    : AssetImage("assets/icons/hard.png")),
+        leading: Wrap(
+          children: [
+            IconButton(
+                onPressed: null,
+                icon: widget.puzzle.playingAs == PieceColor.WHITE
+                    ? new Image.asset("assets/icons/white-piece.png")
+                    : new Image.asset("assets/icons/black-piece.png")),
+            IconButton(
+                onPressed: null,
+                icon: widget.puzzle.level == Level.EASY
+                    ? new Image.asset("assets/icons/easy.png")
+                    : widget.puzzle.level == Level.MEDIUM
+                        ? new Image.asset("assets/icons/medium.png")
+                        : new Image.asset("assets/icons/hard.png"))
+          ],
+        ),
+        trailing: IconButton(
+          icon: Icon(Icons.remove_red_eye, size: 30),
+          onPressed: () => print("show solution!"),
+        ),
       ),
     );
   }
