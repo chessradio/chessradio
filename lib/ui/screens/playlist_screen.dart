@@ -1,6 +1,3 @@
-import 'package:chessradio/bloc/PuzzlesBloc.dart';
-import 'package:chessradio/model/puzzle.dart';
-import 'package:chessradio/repository/PuzzleRepository.dart';
 import 'package:chessradio/ui/widgets/bar/chess_radio_drawer_widget.dart';
 import 'package:chessradio/ui/widgets/bar/chess_radio_title_widget.dart';
 import 'package:chessradio/ui/widgets/playlist/audio_bar_widget.dart';
@@ -17,14 +14,11 @@ class PlayListScreen extends StatefulWidget {
 }
 
 class _PlayListScreenState extends State<PlayListScreen> {
-  late PuzzleRepository _repository;
   late AudioPlayer _player;
-  late List<Puzzle> _playlist;
 
   @override
   void initState() {
     super.initState();
-    _repository = PuzzleRepository();
     _player = AudioPlayer();
 
     SystemChrome.setSystemUIOverlayStyle(SystemUiOverlayStyle(
@@ -34,21 +28,8 @@ class _PlayListScreenState extends State<PlayListScreen> {
   }
 
   Future<void> _init() async {
-    _playlist =
-        await _repository.fetchPuzzles().then((value) => value.toList());
-
     final session = await AudioSession.instance;
     await session.configure(AudioSessionConfiguration.speech());
-    try {
-      await _player.setAudioSource(ConcatenatingAudioSource(
-          children: _playlist
-              .map((puzzle) =>
-                  AudioSource.uri(Uri.parse(puzzle.audioAsset), tag: puzzle))
-              .toList()));
-    } catch (e) {
-      // catch load errors: 404, invalid url ...
-      print("An error occured $e");
-    }
   }
 
   @override
@@ -78,7 +59,7 @@ class _PlayListScreenState extends State<PlayListScreen> {
                   crossAxisAlignment: CrossAxisAlignment.center,
                   mainAxisAlignment: MainAxisAlignment.center,
                   children: [
-                    PlaylistWidget(_player, PuzzlesBloc()),
+                    PlaylistWidget(_player),
                     SizedBox(height: 8.0),
                     AudioBarWidget(_player),
                     ControlButtonsWidget(_player),
