@@ -25,7 +25,7 @@ dependencies:
     sdk: flutter
   just_audio: ^0.8.0
   google_fonts: ^2.1.0
-
+  splash_screen_view: ^3.0.0
 
   # The following adds the Cupertino Icons font to your application.
   # Use with the CupertinoIcons class for iOS style icons.
