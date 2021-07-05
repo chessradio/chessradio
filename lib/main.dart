@@ -14,28 +14,26 @@ class ChessRadio extends StatefulWidget {
 class _ChessRadioState extends State<ChessRadio> {
   @override
   Widget build(BuildContext context) {
-    Widget splashScreen = SplashScreenView(
-      navigateRoute: PlayListScreen(),
-      duration: 5000,
-      imageSize: 130,
-      imageSrc: "assets/icons/black-piece.png",
-      text: "Welcome to chess radio!",
-      textType: TextType.ColorizeAnimationText,
-      textStyle: TextStyle(
-        fontSize: 40.0,
-      ),
-      colors: [
-        Colors.purple,
-        Colors.blue,
-        Colors.yellow,
-        Colors.red,
-      ],
-      backgroundColor: Colors.white,
-    );
-
     return MaterialApp(
       title: 'Welcome to chess radio',
-      home: splashScreen,
+      home: SplashScreenView(
+        navigateRoute: PlayListScreen(),
+        duration: 5000,
+        imageSize: 130,
+        imageSrc: "assets/icons/black-piece.png",
+        text: "Welcome to chess radio!",
+        textType: TextType.ColorizeAnimationText,
+        textStyle: TextStyle(
+          fontSize: 40.0,
+        ),
+        colors: [
+          Colors.purple,
+          Colors.blue,
+          Colors.yellow,
+          Colors.red,
+        ],
+        backgroundColor: Colors.white,
+      ),
     );
   }
 }

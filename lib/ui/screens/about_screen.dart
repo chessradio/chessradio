@@ -13,6 +13,7 @@ class _AboutScreenState extends State<AboutScreen> {
   @override
   Widget build(BuildContext context) {
     return MaterialApp(
+      title: 'About',
       home: Scaffold(
         appBar: AppBar(
           title: ChessRadioTitleWidget('About', false),

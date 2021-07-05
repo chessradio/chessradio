@@ -41,6 +41,7 @@ class _PlayListScreenState extends State<PlayListScreen> {
   @override
   Widget build(BuildContext context) {
     return MaterialApp(
+      title: 'ChessRadio',
       home: Hero(
         tag: 'playlist',
         child: Scaffold(

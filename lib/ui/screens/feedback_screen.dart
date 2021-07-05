@@ -13,6 +13,7 @@ class _FeedbackScreenState extends State<FeedbackScreen> {
   @override
   Widget build(BuildContext context) {
     return MaterialApp(
+      title: 'Feedback',
       home: Scaffold(
         appBar: AppBar(
           title: ChessRadioTitleWidget('Feedback', false),
