@@ -28,7 +28,7 @@ class _PlaylistWidgetState extends State<PlaylistWidget> {
       await widget.player.setAudioSource(ConcatenatingAudioSource(
           children: _playlist
               .map((puzzle) =>
-                  AudioSource.uri(Uri.parse(puzzle.audioAsset), tag: puzzle))
+                  AudioSource.uri(Uri.parse(puzzle.audio), tag: puzzle))
               .toList()));
     } catch (e) {
       // catch load errors: 404, invalid url ...

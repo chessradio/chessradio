@@ -18,16 +18,16 @@ class _PuzzleWidgetState extends State<PuzzleWidget> {
     return Material(
       color: widget.color,
       child: ListTile(
-        title: Text(widget.puzzle.title),
+        title: Text(widget.puzzle.id),
         onTap: widget.onTap,
         leading: Wrap(
           children: [
             Tooltip(
-                message: widget.puzzle.playingAs.toString().split('.').last +
+                message: widget.puzzle.player.toString().split('.').last +
                     " pieces start",
                 child: IconButton(
                     onPressed: null,
-                    icon: widget.puzzle.playingAs == PieceColor.WHITE
+                    icon: widget.puzzle.player == Player.WHITE
                         ? new Image.asset("assets/icons/white-piece.png")
                         : new Image.asset("assets/icons/black-piece.png"))),
             Tooltip(

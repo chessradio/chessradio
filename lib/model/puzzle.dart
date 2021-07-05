@@ -1,33 +1,41 @@
 class Puzzle {
-  late String title;
+  late String id;
+  late String fen;
+  late int rating;
+  late String url;
   late Level level;
-  late PieceColor playingAs;
-  late String audioAsset;
-  late String audioSolutionAsset;
-  late String imageSolutionAsset;
+  late Player player;
+  late String audio;
+  late String image;
 
   Puzzle(
-      {required this.title,
+      {required this.id,
+      required this.fen,
+      required this.rating,
+      required this.url,
       required this.level,
-      required this.playingAs,
-      required this.audioAsset,
-      required this.audioSolutionAsset,
-      required this.imageSolutionAsset});
+      required this.player,
+      required this.audio,
+      required this.image});
 
   Puzzle.fromJson(Map<String, dynamic> json) {
-    title = json['title'];
-    level = Level.values.firstWhere((e) =>
+    id = json['id'];
+    fen = json['fen'];
+    rating = int.parse(json['rating']);
+    url = json['url'];
+    player = Player.values.firstWhere((e) =>
         e.toString().split('.')[1].toUpperCase() ==
-        json['level'].toUpperCase());
-    playingAs = PieceColor.values.firstWhere((e) =>
-        e.toString().split('.')[1].toUpperCase() ==
-        json['playingAs'].toUpperCase());
-    audioAsset = json['audioAsset'];
-    audioSolutionAsset = json['solution']['audioAsset'];
-    imageSolutionAsset = json['solution']['imageAsset'];
+        json['player'].toUpperCase());
+    audio = json['audio'];
+    image = json['image'];
+    if (this.rating < 1200)
+      this.level = Level.EASY;
+    else if (this.rating <= 1800)
+      this.level = Level.MEDIUM;
+    else
+      this.level = Level.HARD;
   }
 }
 
+enum Player { BLACK, WHITE }
 enum Level { EASY, MEDIUM, HARD }
-
-enum PieceColor { BLACK, WHITE }
