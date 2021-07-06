@@ -1,4 +1,5 @@
 import 'package:chessradio/model/puzzle.dart';
+import 'package:chessradio/ui/widgets/playlist/image_dialog_widget.dart';
 import 'package:flutter/material.dart';
 
 class PuzzleWidget extends StatefulWidget {
@@ -47,7 +48,9 @@ class _PuzzleWidgetState extends State<PuzzleWidget> {
           child: IconButton(
             icon: Icon(Icons.remove_red_eye, size: 30),
             onPressed: () async {
-              print('show solution!');
+              await showDialog(
+                  context: context,
+                  builder: (_) => ImageDialog(widget.puzzle.image));
             },
           ),
         ),
