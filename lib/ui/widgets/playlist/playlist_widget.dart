@@ -1,5 +1,5 @@
 import 'package:chessradio/model/puzzle.dart';
-import 'package:chessradio/repository/PuzzleRepository.dart';
+import 'package:chessradio/repository/puzzle_repository.dart';
 import 'package:chessradio/ui/widgets/playlist/puzzle_widget.dart';
 import 'package:flutter/material.dart';
 import 'package:just_audio/just_audio.dart';
