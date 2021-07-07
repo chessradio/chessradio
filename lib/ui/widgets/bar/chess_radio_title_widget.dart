@@ -15,7 +15,7 @@ class ChessRadioTitleWidget extends StatelessWidget {
         child: RichText(
           text: TextSpan(
             style: logo
-                ? GoogleFonts.dancingScript()
+                ? GoogleFonts.niconne(fontWeight: FontWeight.w400)
                 : GoogleFonts.montserrat(
                     fontWeight: FontWeight.w200,
                   ),
@@ -23,8 +23,8 @@ class ChessRadioTitleWidget extends StatelessWidget {
               TextSpan(
                 text: titleText,
                 style: TextStyle(
-                  fontWeight: FontWeight.bold,
                   fontSize: 32,
+                  color: Colors.white,
                 ),
               ),
             ],

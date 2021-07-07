@@ -11,24 +11,13 @@ class ControlButtonsWidget extends StatelessWidget {
     return Row(
       mainAxisSize: MainAxisSize.min,
       children: [
-        IconButton(
-          icon: Icon(Icons.volume_up),
-          onPressed: () {
-            _showSliderDialog(
-              context: context,
-              title: "Adjust volume",
-              divisions: 10,
-              min: 0.0,
-              max: 1.0,
-              stream: player.volumeStream,
-              onChanged: player.setVolume,
-            );
-          },
-        ),
         StreamBuilder<SequenceState?>(
           stream: player.sequenceStateStream,
           builder: (context, snapshot) => IconButton(
-            icon: Icon(Icons.skip_previous),
+            icon: Icon(
+              Icons.skip_previous,
+              color: Colors.black,
+            ),
             onPressed: player.hasPrevious ? player.seekToPrevious : null,
           ),
         ),
@@ -48,14 +37,20 @@ class ControlButtonsWidget extends StatelessWidget {
               );
             } else if (playing != true) {
               return IconButton(
-                icon: Icon(Icons.play_arrow),
-                iconSize: 64.0,
+                icon: Icon(
+                  Icons.play_arrow,
+                  color: Colors.black,
+                ),
+                iconSize: 50.0,
                 onPressed: player.play,
               );
             } else if (processingState != ProcessingState.completed) {
               return IconButton(
-                icon: Icon(Icons.pause),
-                iconSize: 64.0,
+                icon: Icon(
+                  Icons.pause,
+                  color: Colors.black,
+                ),
+                iconSize: 50.0,
                 onPressed: player.pause,
               );
             } else {
@@ -71,26 +66,11 @@ class ControlButtonsWidget extends StatelessWidget {
         StreamBuilder<SequenceState?>(
           stream: player.sequenceStateStream,
           builder: (context, snapshot) => IconButton(
-            icon: Icon(Icons.skip_next),
+            icon: Icon(
+              Icons.skip_next,
+              color: Colors.black,
+            ),
             onPressed: player.hasNext ? player.seekToNext : null,
-          ),
-        ),
-        StreamBuilder<double>(
-          stream: player.speedStream,
-          builder: (context, snapshot) => IconButton(
-            icon: Text("${snapshot.data?.toStringAsFixed(1)}x",
-                style: TextStyle(fontWeight: FontWeight.bold)),
-            onPressed: () {
-              _showSliderDialog(
-                context: context,
-                title: "Adjust speed",
-                divisions: 10,
-                min: 0.5,
-                max: 1.5,
-                stream: player.speedStream,
-                onChanged: player.setSpeed,
-              );
-            },
           ),
         ),
       ],

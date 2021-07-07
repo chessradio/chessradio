@@ -1,6 +1,7 @@
 import 'package:chessradio/model/puzzle.dart';
 import 'package:chessradio/ui/widgets/playlist/image_dialog_widget.dart';
 import 'package:flutter/material.dart';
+import 'package:google_fonts/google_fonts.dart';
 
 class PuzzleWidget extends StatefulWidget {
   final Puzzle puzzle;
@@ -19,34 +20,80 @@ class _PuzzleWidgetState extends State<PuzzleWidget> {
     return Material(
       color: widget.color,
       child: ListTile(
-        title: Text(widget.puzzle.id),
         onTap: widget.onTap,
         leading: Wrap(
           children: [
             Tooltip(
-                message: widget.puzzle.player.toString().split('.').last +
-                    " pieces start",
+                preferBelow: false,
+                height: 30,
+                message: "Moves " +
+                    widget.puzzle.player
+                        .toString()
+                        .split('.')
+                        .last
+                        .toLowerCase(),
                 child: IconButton(
                     onPressed: null,
                     icon: widget.puzzle.player == Player.WHITE
                         ? new Image.asset("assets/icons/white-piece.png")
                         : new Image.asset("assets/icons/black-piece.png"))),
             Tooltip(
-                message:
-                    widget.puzzle.level.toString().split('.').last + " level",
-                child: IconButton(
-                    onPressed: null,
-                    icon: widget.puzzle.level == Level.EASY
-                        ? new Image.asset("assets/icons/easy.png")
-                        : widget.puzzle.level == Level.MEDIUM
-                            ? new Image.asset("assets/icons/medium.png")
-                            : new Image.asset("assets/icons/hard.png")))
+              preferBelow: false,
+              message: 'Mate in 1',
+              child: Container(
+                margin: EdgeInsets.all(8),
+                padding: EdgeInsets.all(5),
+                decoration: BoxDecoration(
+                  color: Colors.white,
+                  border: Border.all(
+                      color: Colors.black, // Set border color
+                      width: 1.0), // Set border width
+                  borderRadius: BorderRadius.all(Radius.circular(5.0)),
+                ), //
+                child: Text(
+                  'M1',
+                  style: GoogleFonts.rochester(
+                    color: Colors.black,
+                    fontSize: 15,
+                    fontWeight: FontWeight.w900,
+                  ),
+                ),
+              ),
+            ),
+            Tooltip(
+              preferBelow: false,
+              message: 'The puzzle has 4 pieces',
+              child: Container(
+                margin: EdgeInsets.all(8),
+                padding: EdgeInsets.all(5),
+                decoration: BoxDecoration(
+                  color: Colors.white,
+                  border: Border.all(
+                      color: Colors.black, // Set border color
+                      width: 1.0), // Set border width
+                  borderRadius: BorderRadius.all(Radius.circular(5.0)),
+                ), //
+                child: Text(
+                  "4 pieces",
+                  style: GoogleFonts.rochester(
+                    color: Colors.black,
+                    fontSize: 15,
+                    fontWeight: FontWeight.w900,
+                  ),
+                ),
+              ),
+            ),
           ],
         ),
         trailing: Tooltip(
+          preferBelow: false,
           message: "Show solution",
           child: IconButton(
-            icon: Icon(Icons.remove_red_eye, size: 30),
+            icon: Icon(
+              Icons.remove_red_eye,
+              size: 30,
+              color: Colors.grey[700],
+            ),
             onPressed: () async {
               await showDialog(
                   context: context,

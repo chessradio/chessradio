@@ -10,9 +10,13 @@ class ImageDialog extends StatelessWidget {
     return Dialog(
       child: Container(
         width: 300,
-        height: 300,
+        height: 270,
         decoration: BoxDecoration(
-          image: DecorationImage(image: NetworkImage(url), fit: BoxFit.fill),
+          image: DecorationImage(
+            fit: BoxFit.fitWidth,
+            alignment: FractionalOffset(0, 1),
+            image: NetworkImage(url),
+          ),
         ),
       ),
     );

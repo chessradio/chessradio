@@ -48,12 +48,20 @@ class _PlaylistWidgetState extends State<PlaylistWidget> {
           return ListView.builder(
               itemCount: sequence.length,
               itemBuilder: (BuildContext context, int index) {
-                return PuzzleWidget(
-                    sequence[index].tag,
-                    index == state!.currentIndex
-                        ? Colors.grey.shade300
-                        : Colors.transparent,
-                    () => widget.player.seek(Duration.zero, index: index));
+                return Column(
+                  children: [
+                    PuzzleWidget(
+                        sequence[index].tag,
+                        index == state!.currentIndex
+                            ? Colors.grey.shade300
+                            : Colors.transparent,
+                        () => widget.player.seek(Duration.zero, index: index)),
+                    Divider(
+                      color: Colors.black,
+                      height: 0,
+                    )
+                  ],
+                );
               });
         },
       ),

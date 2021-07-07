@@ -46,8 +46,8 @@ class _PlayListScreenState extends State<PlayListScreen> {
         tag: 'playlist',
         child: Scaffold(
           appBar: AppBar(
-            title: ChessRadioTitleWidget('Train', false),
-            backgroundColor: Colors.yellow,
+            title: ChessRadioTitleWidget('Chess Radio', true),
+            backgroundColor: Colors.black,
             actions: [
               ChessRadioDrawerWidget(),
             ],
@@ -57,17 +57,56 @@ class _PlayListScreenState extends State<PlayListScreen> {
             child: Center(
               child: Container(
                 child: Column(
-                  crossAxisAlignment: CrossAxisAlignment.center,
-                  mainAxisAlignment: MainAxisAlignment.center,
                   children: [
-                    SizedBox(height: 1.0),
                     Container(
-                      height: 240,
+                      height: MediaQuery.of(context).size.height * 0.7,
+                      margin: EdgeInsets.only(
+                        bottom: 0,
+                      ),
+                      alignment: Alignment.center,
+                      decoration: BoxDecoration(
+                          color: Colors.white,
+                          border: Border.all(
+                              color: Colors.white, // Set border color
+                              width: 1.0), // Set border width
+                          borderRadius: BorderRadius.all(Radius.circular(
+                              5.0)), // Set rounded corner radius
+                          boxShadow: [] // Make rounded corner of border
+                          ),
                       child: PlaylistWidget(_player),
                     ),
-                    SizedBox(height: 8.0),
-                    AudioBarWidget(_player),
-                    ControlButtonsWidget(_player),
+                    Divider(
+                      color: Colors.black,
+                      thickness: 2,
+                    ),
+                    Expanded(
+                      child: Container(
+                        margin: EdgeInsets.only(
+                          bottom: 0,
+                        ),
+                        alignment: Alignment.center,
+                        decoration: BoxDecoration(
+                            color: Colors.white,
+                            border: Border.all(
+                                color: Colors.white, // Set border color
+                                width: 2.0), // Set border width
+                            borderRadius: BorderRadius.only(
+                              topLeft: Radius.circular(25.0),
+                              topRight: Radius.circular(25.0),
+                            ), // Set rounded corner radius
+                            boxShadow: [] // Make rounded corner of border
+                            ),
+                        child: Column(
+                          crossAxisAlignment: CrossAxisAlignment.center,
+                          mainAxisSize: MainAxisSize.max,
+                          mainAxisAlignment: MainAxisAlignment.end,
+                          children: [
+                            AudioBarWidget(_player),
+                            ControlButtonsWidget(_player),
+                          ],
+                        ),
+                      ),
+                    )
                   ],
                 ),
               ),
