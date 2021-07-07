@@ -55,11 +55,32 @@ class _PlayListScreenState extends State<PlayListScreen> {
           backgroundColor: Colors.white,
           body: SafeArea(
             child: Center(
-              child: Container(
-                child: Column(
-                  children: [
-                    Container(
-                      height: MediaQuery.of(context).size.height * 0.7,
+                child: Container(
+              child: Column(
+                children: [
+                  Container(
+                    height: MediaQuery.of(context).size.height * 0.7,
+                    margin: EdgeInsets.only(
+                      bottom: 0,
+                    ),
+                    alignment: Alignment.center,
+                    decoration: BoxDecoration(
+                        color: Colors.white,
+                        border: Border.all(
+                            color: Colors.white, // Set border color
+                            width: 1.0), // Set border width
+                        borderRadius: BorderRadius.all(
+                            Radius.circular(5.0)), // Set rounded corner radius
+                        boxShadow: [] // Make rounded corner of border
+                        ),
+                    child: PlaylistWidget(_player),
+                  ),
+                  Divider(
+                    color: Colors.black,
+                    thickness: 2,
+                  ),
+                  Expanded(
+                    child: Container(
                       margin: EdgeInsets.only(
                         bottom: 0,
                       ),
@@ -68,52 +89,65 @@ class _PlayListScreenState extends State<PlayListScreen> {
                           color: Colors.white,
                           border: Border.all(
                               color: Colors.white, // Set border color
-                              width: 1.0), // Set border width
-                          borderRadius: BorderRadius.all(Radius.circular(
-                              5.0)), // Set rounded corner radius
+                              width: 2.0), // Set border width
+                          borderRadius: BorderRadius.only(
+                            topLeft: Radius.circular(25.0),
+                            topRight: Radius.circular(25.0),
+                          ), // Set rounded corner radius
                           boxShadow: [] // Make rounded corner of border
                           ),
-                      child: PlaylistWidget(_player),
-                    ),
-                    Divider(
-                      color: Colors.black,
-                      thickness: 2,
-                    ),
-                    Expanded(
-                      child: Container(
-                        margin: EdgeInsets.only(
-                          bottom: 0,
-                        ),
-                        alignment: Alignment.center,
-                        decoration: BoxDecoration(
-                            color: Colors.white,
-                            border: Border.all(
-                                color: Colors.white, // Set border color
-                                width: 2.0), // Set border width
-                            borderRadius: BorderRadius.only(
-                              topLeft: Radius.circular(25.0),
-                              topRight: Radius.circular(25.0),
-                            ), // Set rounded corner radius
-                            boxShadow: [] // Make rounded corner of border
-                            ),
-                        child: Column(
-                          crossAxisAlignment: CrossAxisAlignment.center,
-                          mainAxisSize: MainAxisSize.max,
-                          mainAxisAlignment: MainAxisAlignment.end,
-                          children: [
-                            AudioBarWidget(_player),
-                            ControlButtonsWidget(_player),
-                          ],
-                        ),
+                      child: Column(
+                        crossAxisAlignment: CrossAxisAlignment.center,
+                        mainAxisSize: MainAxisSize.max,
+                        mainAxisAlignment: MainAxisAlignment.end,
+                        children: [
+                          AudioBarWidget(_player),
+                          ControlButtonsWidget(_player),
+                        ],
                       ),
-                    )
-                  ],
-                ),
+                    ),
+                  )
+                ],
               ),
-            ),
+              // Container(
+              //   color: Colors.transparent,
+              //   height:
+              //       screenHeightExcludingToolbar(context, scaleFactor: 0.1),
+              //   child: Padding(
+              //     padding: const EdgeInsets.symmetric(horizontal: 10),
+              //     child: AudioBarWidget(_player),
+              //   ),
+              // ),
+              // Container(
+              //   color: Colors.transparent,
+              //   height:
+              //       screenHeightExcludingToolbar(context, scaleFactor: 0.2),
+              //   child: Padding(
+              //     padding: const EdgeInsets.fromLTRB(0, 0, 0, 10),
+              //     child: ControlButtonsWidget(_player),
+              //   ),
+              // )
+            ) // ],
+                ),
           ),
         ),
       ),
     );
+  }
+
+  double screenHeightExcludingToolbar(BuildContext context,
+      {double scaleFactor = 1}) {
+    return screenHeight(context,
+        scaleFactor: scaleFactor, reducedBy: kToolbarHeight);
+  }
+
+  double screenHeight(BuildContext context,
+      {double scaleFactor = 1, double reducedBy = 0.0}) {
+    return (screenSize(context).height - reducedBy) * scaleFactor;
+  }
+
+  Size screenSize(BuildContext context) {
+    var s = MediaQuery.of(context).size;
+    return MediaQuery.of(context).size;
   }
 }
