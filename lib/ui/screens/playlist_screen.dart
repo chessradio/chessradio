@@ -54,27 +54,57 @@ class _PlayListScreenState extends State<PlayListScreen> {
           ),
           backgroundColor: Colors.white,
           body: SafeArea(
-            child: Center(
-              child: Container(
-                child: Column(
-                  crossAxisAlignment: CrossAxisAlignment.center,
-                  mainAxisAlignment: MainAxisAlignment.center,
-                  children: [
-                    SizedBox(height: 1.0),
-                    Container(
-                      height: 240,
-                      child: PlaylistWidget(_player),
-                    ),
-                    SizedBox(height: 8.0),
-                    AudioBarWidget(_player),
-                    ControlButtonsWidget(_player),
-                  ],
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.center,
+              mainAxisAlignment: MainAxisAlignment.start,
+              children: [
+                Container(
+                  color: Colors.transparent,
+                  height:
+                      screenHeightExcludingToolbar(context, scaleFactor: 0.7),
+                  child: Padding(
+                      padding: const EdgeInsets.all(8),
+                      child: PlaylistWidget(_player)),
                 ),
-              ),
+                Container(
+                  color: Colors.transparent,
+                  height:
+                      screenHeightExcludingToolbar(context, scaleFactor: 0.1),
+                  child: Padding(
+                    padding: const EdgeInsets.symmetric(horizontal: 10),
+                    child: AudioBarWidget(_player),
+                  ),
+                ),
+                Container(
+                  color: Colors.transparent,
+                  height:
+                      screenHeightExcludingToolbar(context, scaleFactor: 0.2),
+                  child: Padding(
+                    padding: const EdgeInsets.fromLTRB(0, 0, 0, 10),
+                    child: ControlButtonsWidget(_player),
+                  ),
+                )
+              ],
             ),
           ),
         ),
       ),
     );
+  }
+
+  double screenHeightExcludingToolbar(BuildContext context,
+      {double scaleFactor = 1}) {
+    return screenHeight(context,
+        scaleFactor: scaleFactor, reducedBy: kToolbarHeight);
+  }
+
+  double screenHeight(BuildContext context,
+      {double scaleFactor = 1, double reducedBy = 0.0}) {
+    return (screenSize(context).height - reducedBy) * scaleFactor;
+  }
+
+  Size screenSize(BuildContext context) {
+    var s = MediaQuery.of(context).size;
+    return MediaQuery.of(context).size;
   }
 }
