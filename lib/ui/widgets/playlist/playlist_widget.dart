@@ -15,11 +15,13 @@ class PlaylistWidget extends StatefulWidget {
 
 class _PlaylistWidgetState extends State<PlaylistWidget> {
   late PuzzlesBloc _bloc;
+  late int _current;
 
   @override
   void initState() {
     super.initState();
     _bloc = new PuzzlesBloc();
+    _current = 0;
   }
 
   @override
@@ -28,7 +30,7 @@ class _PlaylistWidgetState extends State<PlaylistWidget> {
     super.dispose();
   }
 
-  Future<void> select(Puzzle puzzle) async {
+  void select(Puzzle puzzle) async {
     widget.player.seek(Duration.zero, index: 0);
     try {
       await widget.player.setAudioSource(
@@ -60,8 +62,15 @@ class _PlaylistWidgetState extends State<PlaylistWidget> {
                         children: [
                           PuzzleWidget(
                             snapshot.data!.data[index],
-                            Colors.transparent,
-                            () => select(snapshot.data!.data[index]),
+                            _current == index
+                                ? Colors.grey.shade300
+                                : Colors.transparent,
+                            () {
+                              setState(() {
+                                _current = index;
+                              });
+                              select(snapshot.data!.data[index]);
+                            },
                           ),
                           Divider(
                             color: Colors.black,
