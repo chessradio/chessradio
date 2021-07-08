@@ -1,3 +1,4 @@
+import 'package:chessradio/bloc/puzzles_bloc.dart';
 import 'package:chessradio/ui/screens/playlist_screen.dart';
 import 'package:chessradio/ui/widgets/bar/chess_radio_drawer_widget.dart';
 import 'package:chessradio/ui/widgets/bar/chess_radio_title_widget.dart';
@@ -23,7 +24,7 @@ class _FeedbackScreenState extends State<FeedbackScreen> {
             onPressed: () {
               Navigator.of(context).push(
                 MaterialPageRoute(
-                  builder: (context) => PlayListScreen(),
+                  builder: (context) => PlayListScreen(new PuzzlesBloc()),
                 ),
               );
             },

@@ -1,3 +1,4 @@
+import 'package:chessradio/bloc/puzzles_bloc.dart';
 import 'package:chessradio/ui/screens/playlist_screen.dart';
 import 'package:flutter/material.dart';
 import 'package:splash_screen_view/SplashScreenView.dart';
@@ -13,6 +14,20 @@ class ChessRadio extends StatefulWidget {
 }
 
 class _ChessRadioState extends State<ChessRadio> {
+  late PuzzlesBloc _bloc;
+
+  @override
+  void initState() {
+    super.initState();
+    _bloc = new PuzzlesBloc();
+  }
+
+  @override
+  void dispose() {
+    _bloc.dispose();
+    super.dispose();
+  }
+
   @override
   Widget build(BuildContext context) {
     return MaterialApp(
@@ -23,7 +38,7 @@ class _ChessRadioState extends State<ChessRadio> {
         ),
       ),
       home: SplashScreenView(
-        navigateRoute: PlayListScreen(),
+        navigateRoute: PlayListScreen(_bloc),
         duration: 5000,
         text: "Chess Radio",
         textStyle: TextStyle(

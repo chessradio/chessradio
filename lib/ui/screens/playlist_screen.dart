@@ -1,3 +1,4 @@
+import 'package:chessradio/bloc/puzzles_bloc.dart';
 import 'package:chessradio/ui/widgets/bar/chess_radio_drawer_widget.dart';
 import 'package:chessradio/ui/widgets/bar/chess_radio_title_widget.dart';
 import 'package:chessradio/ui/widgets/playlist/audio_bar_widget.dart';
@@ -9,6 +10,9 @@ import 'package:flutter/services.dart';
 import 'package:audio_session/audio_session.dart';
 
 class PlayListScreen extends StatefulWidget {
+  final PuzzlesBloc bloc;
+
+  PlayListScreen(this.bloc);
   @override
   _PlayListScreenState createState() => _PlayListScreenState();
 }
@@ -74,7 +78,7 @@ class _PlayListScreenState extends State<PlayListScreen> {
                               5.0)), // Set rounded corner radius
                           boxShadow: [] // Make rounded corner of border
                           ),
-                      child: PlaylistWidget(_player),
+                      child: PlaylistWidget(_player, widget.bloc),
                     ),
                     Divider(
                       color: Colors.black,

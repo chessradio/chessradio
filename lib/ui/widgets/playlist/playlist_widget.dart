@@ -7,26 +7,24 @@ import 'package:just_audio/just_audio.dart';
 
 class PlaylistWidget extends StatefulWidget {
   final AudioPlayer player;
-  PlaylistWidget(this.player);
+  final PuzzlesBloc bloc;
+  PlaylistWidget(this.player, this.bloc);
 
   @override
   _PlaylistWidgetState createState() => _PlaylistWidgetState();
 }
 
 class _PlaylistWidgetState extends State<PlaylistWidget> {
-  late PuzzlesBloc _bloc;
   late int _current;
 
   @override
   void initState() {
     super.initState();
-    _bloc = new PuzzlesBloc();
     _current = 0;
   }
 
   @override
   void dispose() {
-    _bloc.dispose();
     super.dispose();
   }
 
@@ -45,9 +43,9 @@ class _PlaylistWidgetState extends State<PlaylistWidget> {
   @override
   Widget build(BuildContext context) {
     return RefreshIndicator(
-      onRefresh: () => _bloc.fetchPuzzles(),
+      onRefresh: () => widget.bloc.fetchPuzzles(),
       child: StreamBuilder<Response<List<Puzzle>>>(
-        stream: _bloc.ebookListStream,
+        stream: widget.bloc.ebookListStream,
         builder: (context, snapshot) {
           if (snapshot.hasData) {
             switch (snapshot.data!.status) {
@@ -82,7 +80,7 @@ class _PlaylistWidgetState extends State<PlaylistWidget> {
               case Status.ERROR:
                 return Error(
                   errorMessage: snapshot.data!.message,
-                  onRetryPressed: () => _bloc.fetchPuzzles(),
+                  onRetryPressed: () => widget.bloc.fetchPuzzles(),
                 );
             }
           }
