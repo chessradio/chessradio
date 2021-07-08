@@ -16,6 +16,7 @@ class _ChessRadioState extends State<ChessRadio> {
   @override
   Widget build(BuildContext context) {
     return MaterialApp(
+      debugShowCheckedModeBanner: false,
       theme: ThemeData(
         textTheme: GoogleFonts.niconneTextTheme(
           Theme.of(context).textTheme,

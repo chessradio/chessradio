@@ -41,6 +41,7 @@ class _PlayListScreenState extends State<PlayListScreen> {
   @override
   Widget build(BuildContext context) {
     return MaterialApp(
+      debugShowCheckedModeBanner: false,
       title: 'ChessRadio',
       home: Hero(
         tag: 'playlist',
@@ -119,7 +120,6 @@ class _PlayListScreenState extends State<PlayListScreen> {
   }
 
   Size screenSize(BuildContext context) {
-    var s = MediaQuery.of(context).size;
     return MediaQuery.of(context).size;
   }
 }
