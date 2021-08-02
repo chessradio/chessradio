@@ -11,16 +11,16 @@ class ControlButtonsWidget extends StatelessWidget {
     return Row(
       mainAxisSize: MainAxisSize.min,
       children: [
-        StreamBuilder<SequenceState?>(
-          stream: player.sequenceStateStream,
-          builder: (context, snapshot) => IconButton(
-            icon: Icon(
-              Icons.skip_previous,
-              color: Colors.black,
-            ),
-            onPressed: player.hasPrevious ? player.seekToPrevious : null,
-          ),
-        ),
+        // StreamBuilder<SequenceState?>(
+        //   stream: player.sequenceStateStream,
+        //   builder: (context, snapshot) => IconButton(
+        //     icon: Icon(
+        //       Icons.skip_previous,
+        //       color: Colors.black,
+        //     ),
+        //     onPressed: player.hasPrevious ? player.seekToPrevious : null,
+        //   ),
+        // ),
         StreamBuilder<PlayerState>(
           stream: player.playerStateStream,
           builder: (context, snapshot) {
@@ -36,13 +36,16 @@ class ControlButtonsWidget extends StatelessWidget {
                 child: CircularProgressIndicator(),
               );
             } else if (playing != true) {
-              return IconButton(
-                icon: Icon(
-                  Icons.play_arrow,
-                  color: Colors.black,
-                ),
-                iconSize: 50.0,
+              return RawMaterialButton(
                 onPressed: player.play,
+                // elevation: 2.0,
+                fillColor: Colors.white,
+                child: Icon(
+                  Icons.play_arrow,
+                  size: 50.0,
+                ),
+                // padding: EdgeInsets.all(15.0),
+                shape: CircleBorder(),
               );
             } else if (processingState != ProcessingState.completed) {
               return IconButton(
@@ -63,16 +66,16 @@ class ControlButtonsWidget extends StatelessWidget {
             }
           },
         ),
-        StreamBuilder<SequenceState?>(
-          stream: player.sequenceStateStream,
-          builder: (context, snapshot) => IconButton(
-            icon: Icon(
-              Icons.skip_next,
-              color: Colors.black,
-            ),
-            onPressed: player.hasNext ? player.seekToNext : null,
-          ),
-        ),
+        // StreamBuilder<SequenceState?>(
+        //   stream: player.sequenceStateStream,
+        //   builder: (context, snapshot) => IconButton(
+        //     icon: Icon(
+        //       Icons.skip_next,
+        //       color: Colors.black,
+        //     ),
+        //     onPressed: player.hasNext ? player.seekToNext : null,
+        //   ),
+        // ),
       ],
     );
   }

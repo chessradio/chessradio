@@ -97,10 +97,11 @@ class _PlayListScreenState extends State<PlayListScreen> {
                       color: Colors.transparent,
                       height: screenHeightExcludingToolbar(context,
                           scaleFactor: 0.1),
-                      child: Padding(
-                        padding: const EdgeInsets.fromLTRB(0, 0, 0, 10),
-                        child: ControlButtonsWidget(_player),
-                      ),
+                      child:
+                          // Padding(
+                          //   padding: const EdgeInsets.fromLTRB(0, 0, 0, 0),
+                          //   child:
+                          ControlButtonsWidget(_player),
                     ),
                   ],
                 ),
