@@ -52,7 +52,7 @@ class _PlaylistWidgetState extends State<PlaylistWidget> {
               case Status.LOADING:
                 return Loading();
               case Status.COMPLETED:
-                select(snapshot.data!.data[0]);
+                select(snapshot.data!.data[_current]);
                 return ListView.builder(
                     itemCount: snapshot.data!.data.length,
                     itemBuilder: (BuildContext context, int index) {
@@ -67,7 +67,6 @@ class _PlaylistWidgetState extends State<PlaylistWidget> {
                               setState(() {
                                 _current = index;
                               });
-                              select(snapshot.data!.data[index]);
                             },
                           ),
                           Divider(

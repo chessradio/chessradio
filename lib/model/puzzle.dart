@@ -26,9 +26,8 @@ class Puzzle {
     rating = int.parse(json['rating']);
     url = json['url'];
     pieces = json['pieces'];
-    player = Player.values.firstWhere((e) =>
-        e.toString().split('.')[1].toUpperCase() ==
-        json['player'].toUpperCase());
+    player =
+        json['player'].toUpperCase() == 'WHITE' ? Player.WHITE : Player.BLACK;
     audio = json['audio'];
     image = json['image'];
     if (this.rating < 1200)
