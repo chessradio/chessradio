@@ -93,15 +93,22 @@ class _PlayListScreenState extends State<PlayListScreen> {
                         child: AudioBarWidget(_player),
                       ),
                     ),
-                    Container(
-                      color: Colors.transparent,
-                      height: screenHeightExcludingToolbar(context,
-                          scaleFactor: 0.1),
-                      child:
-                          // Padding(
-                          //   padding: const EdgeInsets.fromLTRB(0, 0, 0, 0),
-                          //   child:
-                          ControlButtonsWidget(_player),
+                    Row(
+                      crossAxisAlignment: CrossAxisAlignment.center,
+                      children: [
+                        Container(
+                          decoration: BoxDecoration(
+                            image: DecorationImage(
+                              image: AssetImage("assets/images/floral.png"),
+                              fit: BoxFit.fitHeight,
+                            ),
+                          ),
+                          width: screenWidth(context, scaleFactor: 1),
+                          height: screenHeightExcludingToolbar(context,
+                              scaleFactor: 0.1),
+                          child: Center(child: ControlButtonsWidget(_player)),
+                        ),
+                      ],
                     ),
                   ],
                 ),
@@ -122,6 +129,11 @@ class _PlayListScreenState extends State<PlayListScreen> {
   double screenHeight(BuildContext context,
       {double scaleFactor = 1, double reducedBy = 0.0}) {
     return (screenSize(context).height - reducedBy) * scaleFactor;
+  }
+
+  double screenWidth(BuildContext context,
+      {double scaleFactor = 1, double reducedBy = 0.0}) {
+    return (screenSize(context).width - reducedBy) * scaleFactor;
   }
 
   Size screenSize(BuildContext context) {
