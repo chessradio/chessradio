@@ -58,7 +58,7 @@ class ControlButtonsWidget extends StatelessWidget {
               );
             } else {
               return IconButton(
-                icon: Icon(Icons.replay),
+                icon: Icon(Icons.play_arrow),
                 iconSize: 64.0,
                 onPressed: () => player.seek(Duration.zero,
                     index: player.effectiveIndices!.first),
