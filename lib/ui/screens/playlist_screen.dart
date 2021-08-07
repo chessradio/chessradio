@@ -51,6 +51,7 @@ class _PlayListScreenState extends State<PlayListScreen> {
         tag: 'playlist',
         child: Scaffold(
           appBar: AppBar(
+            centerTitle: true,
             title: ChessRadioTitleWidget('Chess Radio', true),
             backgroundColor: Colors.black,
             actions: [
@@ -105,7 +106,7 @@ class _PlayListScreenState extends State<PlayListScreen> {
                           ),
                           width: screenWidth(context, scaleFactor: 1),
                           height: screenHeightExcludingToolbar(context,
-                              scaleFactor: 0.15),
+                              scaleFactor: 0.1),
                           child: Center(child: ControlButtonsWidget(_player)),
                         ),
                       ],

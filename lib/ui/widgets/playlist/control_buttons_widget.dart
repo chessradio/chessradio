@@ -42,7 +42,7 @@ class ControlButtonsWidget extends StatelessWidget {
                 fillColor: Colors.white,
                 child: Icon(
                   Icons.play_arrow,
-                  size: 50.0,
+                  size: 40.0,
                 ),
                 // padding: EdgeInsets.all(15.0),
                 shape: CircleBorder(),
@@ -53,7 +53,7 @@ class ControlButtonsWidget extends StatelessWidget {
                   Icons.pause,
                   color: Colors.black,
                 ),
-                iconSize: 50.0,
+                iconSize: 40.0,
                 onPressed: player.pause,
               );
             } else {
