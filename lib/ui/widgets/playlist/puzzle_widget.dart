@@ -62,7 +62,7 @@ class _PuzzleWidgetState extends State<PuzzleWidget> {
             ),
             Tooltip(
               preferBelow: false,
-              message: 'The puzzle has 4 pieces',
+              message: 'The puzzle has ${widget.puzzle.pieces} pieces',
               child: Container(
                 margin: EdgeInsets.all(8),
                 padding: EdgeInsets.all(5),
@@ -74,7 +74,7 @@ class _PuzzleWidgetState extends State<PuzzleWidget> {
                   borderRadius: BorderRadius.all(Radius.circular(5.0)),
                 ), //
                 child: Text(
-                  "4 pieces",
+                  "${widget.puzzle.pieces} pieces",
                   style: GoogleFonts.rochester(
                     color: Colors.black,
                     fontSize: 15,

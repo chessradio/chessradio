@@ -4,6 +4,7 @@ class Puzzle {
   late int rating;
   late String url;
   late Level level;
+  late int pieces;
   late Player player;
   late String audio;
   late String image;
@@ -14,6 +15,7 @@ class Puzzle {
       required this.rating,
       required this.url,
       required this.level,
+      required this.pieces,
       required this.player,
       required this.audio,
       required this.image});
@@ -23,6 +25,7 @@ class Puzzle {
     fen = json['fen'];
     rating = int.parse(json['rating']);
     url = json['url'];
+    pieces = json['pieces'];
     player = Player.values.firstWhere((e) =>
         e.toString().split('.')[1].toUpperCase() ==
         json['player'].toUpperCase());
