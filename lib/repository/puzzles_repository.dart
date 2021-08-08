@@ -9,8 +9,10 @@ class PuzzlesRepository {
   Future<List<Puzzle>> fetchPuzzles() async {
     print('fetching all puzzles');
     final response = await _provider.get();
-    return (response as List)
+    List<Puzzle> original = (response as List)
         .map((jsonPuzzle) => Puzzle.fromJson(jsonPuzzle))
         .toList();
+    original.shuffle();
+    return original.take(20).toList();
   }
 }
