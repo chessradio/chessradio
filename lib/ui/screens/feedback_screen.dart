@@ -35,9 +35,9 @@ class _FeedbackScreenState extends State<FeedbackScreen> {
         ),
         body: Container(
           child: (Text(
-            '''Thanks for beta testing our app! 
+            '''Thanks for using our app! 
 
-Found a bug? Comments? The puzzles are too hard? Drop us an email at hi@chessrad.io
+Found a bug? Comments? Drop us an email at hi@chessrad.io
  ''',
             style: GoogleFonts.montserrat(
               color: Colors.black,
