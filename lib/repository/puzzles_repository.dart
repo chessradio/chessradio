@@ -1,5 +1,4 @@
 import 'dart:async';
-
 import 'package:chessradio/model/puzzle.dart';
 import 'package:chessradio/networking/api_provider.dart';
 
@@ -8,6 +7,7 @@ class PuzzlesRepository {
 
   Future<List<Puzzle>> fetchPuzzles() async {
     print('fetching all puzzles');
+    //await Future.delayed(Duration(seconds: 10));
     final response = await _provider.get();
     List<Puzzle> original = (response as List)
         .map((jsonPuzzle) => Puzzle.fromJson(jsonPuzzle))

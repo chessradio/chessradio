@@ -79,7 +79,7 @@ class _PlaylistWidgetState extends State<PlaylistWidget> {
               case Status.ERROR:
                 return Error(
                   errorMessage: snapshot.data!.message,
-                  onRetryPressed: () => widget.bloc.fetchPuzzles(),
+                  onRetryPressed: () => widget.bloc.fetchPuzzles,
                 );
             }
           }
@@ -106,7 +106,7 @@ class Error extends StatelessWidget {
             errorMessage,
             textAlign: TextAlign.center,
             style: TextStyle(
-              color: Colors.white,
+              color: Colors.black,
               fontSize: 18,
             ),
           ),
@@ -126,10 +126,8 @@ class Loading extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Center(
-      child: DecoratedBox(
-        decoration: BoxDecoration(
-          color: Colors.red,
-        ),
+      child: CircularProgressIndicator(
+        color: Colors.black,
       ),
     );
   }
