@@ -45,7 +45,7 @@ class _PlaylistWidgetState extends State<PlaylistWidget> {
     return RefreshIndicator(
       onRefresh: () => widget.bloc.fetchPuzzles(),
       child: StreamBuilder<Response<List<Puzzle>>>(
-        stream: widget.bloc.ebookListStream,
+        stream: widget.bloc.puzzleListStream,
         builder: (context, snapshot) {
           if (snapshot.hasData) {
             switch (snapshot.data!.status) {

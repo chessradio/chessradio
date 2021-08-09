@@ -5,32 +5,32 @@ import 'package:chessradio/networking/response.dart';
 import 'package:chessradio/repository/puzzles_repository.dart';
 
 class PuzzlesBloc {
-  final PuzzlesRepository _ebookRepository = PuzzlesRepository();
-  late StreamController<Response<List<Puzzle>>> _ebookListController;
+  final PuzzlesRepository _puzzleRepository = PuzzlesRepository();
+  late StreamController<Response<List<Puzzle>>> _puzzleListController;
 
-  StreamSink<Response<List<Puzzle>>> get ebookListSink =>
-      _ebookListController.sink;
+  StreamSink<Response<List<Puzzle>>> get puzzleListSink =>
+      _puzzleListController.sink;
 
-  Stream<Response<List<Puzzle>>> get ebookListStream =>
-      _ebookListController.stream;
+  Stream<Response<List<Puzzle>>> get puzzleListStream =>
+      _puzzleListController.stream;
 
   PuzzlesBloc() {
-    _ebookListController = StreamController<Response<List<Puzzle>>>();
+    _puzzleListController = StreamController<Response<List<Puzzle>>>();
     fetchPuzzles();
   }
 
   fetchPuzzles() async {
-    ebookListSink.add(Response.loading('Getting Puzzles...'));
+    puzzleListSink.add(Response.loading('Getting puzzles...'));
     try {
-      List<Puzzle> ebooks = await _ebookRepository.fetchPuzzles();
-      ebookListSink.add(Response.completed(ebooks));
+      List<Puzzle> puzzles = await _puzzleRepository.fetchPuzzles();
+      puzzleListSink.add(Response.completed(puzzles));
     } catch (e) {
-      ebookListSink.add(Response.error(e.toString()));
+      puzzleListSink.add(Response.error(e.toString()));
       print(e);
     }
   }
 
   dispose() {
-    _ebookListController.close();
+    _puzzleListController.close();
   }
 }

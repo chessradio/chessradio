@@ -3,7 +3,6 @@ class Puzzle {
   late String fen;
   late int rating;
   late String url;
-  late Level level;
   late int pieces;
   late Player player;
   late String audio;
@@ -14,7 +13,6 @@ class Puzzle {
       required this.fen,
       required this.rating,
       required this.url,
-      required this.level,
       required this.pieces,
       required this.player,
       required this.audio,
@@ -30,14 +28,7 @@ class Puzzle {
         json['player'].toUpperCase() == 'WHITE' ? Player.WHITE : Player.BLACK;
     audio = json['audio'];
     image = json['image'];
-    if (this.rating < 1200)
-      this.level = Level.EASY;
-    else if (this.rating <= 1800)
-      this.level = Level.MEDIUM;
-    else
-      this.level = Level.HARD;
   }
 }
 
 enum Player { BLACK, WHITE }
-enum Level { EASY, MEDIUM, HARD }
