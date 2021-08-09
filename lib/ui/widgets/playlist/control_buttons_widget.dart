@@ -11,16 +11,6 @@ class ControlButtonsWidget extends StatelessWidget {
     return Row(
       mainAxisSize: MainAxisSize.min,
       children: [
-        // StreamBuilder<SequenceState?>(
-        //   stream: player.sequenceStateStream,
-        //   builder: (context, snapshot) => IconButton(
-        //     icon: Icon(
-        //       Icons.skip_previous,
-        //       color: Colors.black,
-        //     ),
-        //     onPressed: player.hasPrevious ? player.seekToPrevious : null,
-        //   ),
-        // ),
         StreamBuilder<PlayerState>(
           stream: player.playerStateStream,
           builder: (context, snapshot) {
@@ -33,7 +23,7 @@ class ControlButtonsWidget extends StatelessWidget {
                 margin: EdgeInsets.all(8.0),
                 width: 64.0,
                 height: 64.0,
-                child: CircularProgressIndicator(),
+                child: CircularProgressIndicator(color: Colors.transparent),
               );
             } else if (playing != true) {
               return RawMaterialButton(
@@ -83,16 +73,6 @@ class ControlButtonsWidget extends StatelessWidget {
             }
           },
         ),
-        // StreamBuilder<SequenceState?>(
-        //   stream: player.sequenceStateStream,
-        //   builder: (context, snapshot) => IconButton(
-        //     icon: Icon(
-        //       Icons.skip_next,
-        //       color: Colors.black,
-        //     ),
-        //     onPressed: player.hasNext ? player.seekToNext : null,
-        //   ),
-        // ),
       ],
     );
   }
