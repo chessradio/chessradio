@@ -37,9 +37,9 @@ class _AboutScreenState extends State<AboutScreen> {
           child: (Text(
             '''Chess Radio is an open-source project to practice chess visualization (a.k.a. Blindfold chess). This forces players to maintain a mental model of the positions of the pieces.
 
-It is developed by Oriol Bernal and Enric Moreu as a side project using Flutter. The app is available for Android, iOS, web, and desktop app. The code is available on Github.
+It is developed by Oriol Bernal and Enric Moreu as a side project using Flutter. The app is available for Android, iOS, and web. The code is available at: github.com/chessradio/chessradio
 
-Chess Radio is FREE and will always be FREE. More information at get.chessrad.io
+Chess Radio is FREE and will always be FREE. More information at: get.chessrad.io
 
  ''',
             style: GoogleFonts.montserrat(
