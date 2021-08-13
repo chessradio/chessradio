@@ -56,15 +56,6 @@ class _GetTheAppScreenState extends State<GetTheAppScreen> {
                 fit: BoxFit.cover,
               ),
             ),
-            SizedBox(height: 10),
-            GestureDetector(
-              onTap: _launchURLiOS,
-              child: Image.asset(
-                'assets/images/appstore.png',
-                height: 50,
-                fit: BoxFit.cover,
-              ),
-            ),
           ],
         ),
         backgroundColor: Colors.white,
@@ -77,15 +68,6 @@ class SelectorScreen {}
 
 _launchURLAndroid() async {
   const url = 'https://play.google.com/store/search?q=chessradio';
-  if (await canLaunch(url)) {
-    await launch(url);
-  } else {
-    throw 'Could not launch $url';
-  }
-}
-
-_launchURLiOS() async {
-  const url = 'https://www.apple.com/us-hed/search/chessradio';
   if (await canLaunch(url)) {
     await launch(url);
   } else {
